@@ -819,6 +819,11 @@ class PokeDB {
     return monID;
   }
 
+  static int getMonId(String mon){
+    final monID = pokemonList.indexOf(mon);
+    return monID + 1;
+  }
+
   static List<Map<String, String>> getMons(String query){
     List<Map<String, String>> matches = List();
     if(query.isNotEmpty){

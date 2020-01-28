@@ -41,17 +41,17 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
               child: Padding(
                   padding: const EdgeInsets.all(4.0),
                   child: TypeAheadField(
-                    hideOnEmpty: true,    
+                    hideOnEmpty: true,
                     hideOnError: true,
-                    hideSuggestionsOnKeyboardHide: true,               
+                    hideSuggestionsOnKeyboardHide: true,
                     textFieldConfiguration: TextFieldConfiguration(
                       onEditingComplete: () async {
                         FocusScope.of(context).requestFocus(FocusNode());
-                        if(_textController.text.isNotEmpty){
-                        BlocProvider.of<SmogonBloc>(context).add(SearchSmogon(
-                            alias: _textController.text.toLowerCase(),
-                            lang: 'en',
-                            gen: 'xy'));
+                        if (_textController.text.isNotEmpty) {
+                          BlocProvider.of<SmogonBloc>(context).add(SearchSmogon(
+                              alias: _textController.text.toLowerCase(),
+                              lang: 'en',
+                              gen: 'xy'));
                         }
                       },
                       controller: _textController,
@@ -74,20 +74,22 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
                       return PokeDB.getMons(pattern);
                     },
                     itemBuilder: (context, suggestion) {
-                      if(_textController.text.isNotEmpty){
+                      if (_textController.text.isNotEmpty) {
                         return ListTile(
-                          leading: Image.asset('lib/assets/img/sprites/${suggestion['ID']}.png'),
+                          leading: Image.asset(
+                              'lib/assets/img/sprites/${suggestion['ID']}.png'),
                           title: Text(suggestion['name']),
                         );
                       }
                       //return null;
                     },
-                    onSuggestionSelected: (Map<String, String> suggestion) async {
+                    onSuggestionSelected:
+                        (Map<String, String> suggestion) async {
                       _textController.text = suggestion['name'];
                       BlocProvider.of<SmogonBloc>(context).add(SearchSmogon(
-                            alias: _textController.text.toLowerCase(),
-                            lang: 'en',
-                            gen: 'xy'));
+                          alias: _textController.text.toLowerCase(),
+                          lang: 'en',
+                          gen: 'xy'));
                     },
                   )),
             ),
@@ -228,10 +230,20 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
                                 )
                               ],
                             ),
-                            Text('Strategies', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                            Text('Strategies',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 20)),
                             Container(
                               padding: EdgeInsets.all(6),
                               margin: EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                border: Border.all(
+                                  color: Colors.red,
+                                ),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              //child: ,
                             )
                           ],
                         ),
