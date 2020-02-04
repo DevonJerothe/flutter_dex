@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_dex/data/poke_api/poke_api.dart';
+import 'package:flutter_dex/data/poke_api/apiwrapper/poke_api.dart';
+import 'package:flutter_dex/data/poke_api/pokemon.dart';
 import 'package:flutter_dex/data/smogon/smogon.dart';
 import './bloc.dart';
 
@@ -13,10 +14,10 @@ class SmogonBloc extends Bloc<SmogonEvent, SmogonState> {
   Stream<SmogonState> mapEventToState(
     SmogonEvent event,
   ) async* {
-    if(event is SearchSmogon){
+    if (event is SearchSmogon) {
       yield* _mapSearchSmogon(event);
     }
-    if(event is ResetSmogon){
+    if (event is ResetSmogon) {
       yield* _mapResetState();
     }
   }
@@ -28,16 +29,18 @@ class SmogonBloc extends Bloc<SmogonEvent, SmogonState> {
     final gen = event.gen;
     final language = event.lang;
 
-    final body = {"gen":gen,"alias":pokemon,"language":language};
+    final body = {"gen": gen, "alias": pokemon, "language": language};
 
-    Response smogResponse = await Dio().post("https://www.smogon.com/dex/_rpc/dump-pokemon", data: body);
-    Response apiResponse = await Dio().get('https://pokeapi.co/api/v2/pokemon/${pokemon}');
+    Response smogResponse = await Dio()
+        .post("https://www.smogon.com/dex/_rpc/dump-pokemon", data: body);
+    Pokemon apiResponse = await PokeAPI().getPokemon(pokemon: pokemon.toLowerCase());
+    // Response apiResponse =
+    //     await Dio().get('https://pokeapi.co/api/v2/pokemon/${pokemon}');
 
-    if(smogResponse.data != null && apiResponse.data != null){
+    if (smogResponse.data != null && apiResponse != null) {
       final smogResult = Smogon.fromJson(smogResponse.data);
-      final apiResult = PokeApi.fromJson(apiResponse.data);
-      yield SmogonLoaded(smogResult, apiResult);
-    }else{
+      yield SmogonLoaded(smogResult, apiResponse);
+    } else {
       yield SmogonFailed('Pokemon lookup Failed');
     }
   }

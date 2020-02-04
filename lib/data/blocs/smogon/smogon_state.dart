@@ -1,4 +1,4 @@
-import 'package:flutter_dex/data/poke_api/poke_api.dart';
+import 'package:flutter_dex/data/poke_api/pokemon.dart';
 import 'package:flutter_dex/data/smogon/smogon.dart';
 import 'package:meta/meta.dart';
 
@@ -12,7 +12,7 @@ class SmogonSearching extends SmogonState {}
 class SmogonLoaded extends SmogonState {
   SmogonLoaded(this.smogData, this.apiData);
   final Smogon smogData;
-  final PokeApi apiData;
+  final Pokemon apiData;
 }
 
 class SmogonFailed extends SmogonState {

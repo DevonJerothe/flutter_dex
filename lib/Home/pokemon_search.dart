@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dex/data/db/pokemon_list.dart';
+import 'package:flutter_dex/data/poke_api/apiwrapper/poke_api.dart';
+import 'package:flutter_dex/data/poke_api/pokemon.dart';
 import 'package:flutter_rounded_progress_bar/flutter_rounded_progress_bar.dart';
 import 'package:flutter_rounded_progress_bar/rounded_progress_bar_style.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 import '../data/blocs/smogon/bloc.dart';
-import '../data/poke_api/poke_api.dart';
 import '../data/smogon/smogon.dart';
 
 class MainSearchScreen extends StatefulWidget {
@@ -17,7 +18,7 @@ class MainSearchScreen extends StatefulWidget {
 class _MainSearchScreenState extends State<MainSearchScreen> {
   final _textController = TextEditingController();
   Smogon smogonResult;
-  PokeApi apiResult;
+  Pokemon apiResult;
 
   @override
   void dispose() {
@@ -243,7 +244,13 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
                                 ),
                                 borderRadius: BorderRadius.circular(15),
                               ),
-                              //child: ,
+                              child: RaisedButton(
+                                child: Text('test call'),
+                                onPressed: () async {
+                                  print('test');
+                                  await PokeAPI().getPokemon(id: 1);
+                                }
+                              )
                             )
                           ],
                         ),
@@ -318,7 +325,7 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
     }
   }
 
-  Container buildBar(PokeApi apiResult, int i, String stat) {
+  Container buildBar(Pokemon apiResult, int i, String stat) {
     return Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
