@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_html_view/flutter_html_view.dart';
 import 'package:flutter_rounded_progress_bar/flutter_rounded_progress_bar.dart';
 import 'package:flutter_rounded_progress_bar/rounded_progress_bar_style.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -29,7 +30,7 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Smogon Test'),
+        title: Text('Flutter Dex'),
       ),
       body: SafeArea(
         child: Column(
@@ -253,8 +254,7 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
                                       'Move Set',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          decoration: TextDecoration.underline
-                                      ),
+                                          decoration: TextDecoration.underline),
                                     ),
                                   ),
                                   Builder(
@@ -274,19 +274,153 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
                                       );
                                     },
                                   ),
-                                  Row(
-                                    children: <Widget>[
-                                      //Stat placement goes here
-                                    ],
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Divider(),
                                   ),
-                                  Row(
-                                    children: <Widget>[
-                                      //Items and ability goes here
-                                    ],
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 8.0),
+                                    child: Text(
+                                      'EV config',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          decoration: TextDecoration.underline),
+                                    ),
                                   ),
+                                  Container(
+                                    // padding: EdgeInsets.only(top: 10),
+                                    child: Builder(builder: (_) {
+                                      final evs = smogonResult.strategies[0]
+                                          .movesets[0].evconfigs[0];
+                                      List<Widget> evList = [];
+                                      if (evs.atk > 0) {
+                                        evList.add(Text('atk: ${evs.atk}'));
+                                      }
+                                      if (evs.def > 0) {
+                                        evList.add(Text('def: ${evs.def}'));
+                                      }
+                                      if (evs.hp > 0) {
+                                        evList.add(Text('def: ${evs.hp}'));
+                                      }
+                                      if (evs.spa > 0) {
+                                        evList.add(Text('def: ${evs.spa}'));
+                                      }
+                                      if (evs.spd > 0) {
+                                        evList.add(Text('def: ${evs.spd}'));
+                                      }
+                                      if (evs.spe > 0) {
+                                        evList.add(Text('def: ${evs.spe}'));
+                                      }
+                                      return Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: evList,
+                                      );
+                                    }),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Divider(),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 8.0),
+                                    child: Text(
+                                      'Items / Ability / Nature',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          decoration: TextDecoration.underline),
+                                    ),
+                                  ),
+                                  Builder(
+                                    builder: (_) {
+                                      final items = smogonResult
+                                          .strategies[0].movesets[0].items;
+                                      final abilities = smogonResult
+                                          .strategies[0].movesets[0].abilities;
+                                      final natures = smogonResult
+                                          .strategies[0].movesets[0].natures;
+                                      List<Widget> itemList = [];
+                                      String itemString = '';
+                                      String abilityList = '';
+                                      String natureList = '';
+                                      for (var item in items) {
+                                        if (itemString.isEmpty) {
+                                          itemString = item;
+                                        } else {
+                                          itemString += '/$item';
+                                        }
+                                      }
+                                      for (var ability in abilities) {
+                                        if (abilityList.isEmpty) {
+                                          abilityList = ability;
+                                        } else {
+                                          abilityList += '/$ability';
+                                        }
+                                      }
+                                      for (var nature in natures) {
+                                        if (natureList.isEmpty) {
+                                          natureList = nature;
+                                        } else {
+                                          natureList += '/$nature';
+                                        }
+                                      }
+                                      itemList.add(Text(itemString));
+                                      itemList.add(Text(abilityList));
+                                      itemList.add(Text(natureList));
+                                      return Container(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: itemList,
+                                        ),
+                                      );
+                                    },
+                                  )
                                 ],
                               ),
-                            )
+                            ),
+                            ExpansionTile(
+                              title: Text('strategy overview'),
+                              subtitle: Text('author: ${smogonResult.strategies[0].credits.writtenBy[0].username}'),
+                              children: <Widget>[
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  child: HtmlView(
+                                      data: smogonResult.strategies[0].comments,
+                                      scrollable: false),
+                                ),
+                              ],
+                            ),
+                            ExpansionTile(
+                              title: Text('${apiResult.name} overview'),
+                              subtitle: Text('author: ${smogonResult.strategies[0].credits.writtenBy[0].username}'),
+                              children: <Widget>[
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  child: HtmlView(
+                                      data: smogonResult.strategies[0].overview,
+                                      scrollable: false),
+                                )
+                              ],
+                            ),
+                            // Padding(
+                            //   padding: const EdgeInsets.all(8.0),
+                            //   child: Text(
+                            //     'Overview',
+                            //     style: TextStyle(
+                            //         decoration: TextDecoration.underline),
+                            //   ),
+                            // ),
+                            // Container(
+                            //     //height: 100,
+                            //     margin: EdgeInsets.all(10),
+                            //     child: HtmlView(
+                            //         data: smogonResult.strategies[0].overview,
+                            //         scrollable: false))
                           ],
                         ),
                       );
