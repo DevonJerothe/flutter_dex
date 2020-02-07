@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dex/data/db/pokemon_list.dart';
+import 'package:flutter_html_view/flutter_html_view.dart';
 import 'package:flutter_rounded_progress_bar/flutter_rounded_progress_bar.dart';
 import 'package:flutter_rounded_progress_bar/rounded_progress_bar_style.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 import '../data/blocs/smogon/bloc.dart';
-import '../data/poke_api/poke_api.dart';
+import '../data/db/pokemon_list.dart';
+import '../data/poke_api/pokemon.dart';
 import '../data/smogon/smogon.dart';
 
 class MainSearchScreen extends StatefulWidget {
@@ -17,7 +18,7 @@ class MainSearchScreen extends StatefulWidget {
 class _MainSearchScreenState extends State<MainSearchScreen> {
   final _textController = TextEditingController();
   Smogon smogonResult;
-  PokeApi apiResult;
+  Pokemon apiResult;
 
   @override
   void dispose() {
@@ -29,7 +30,7 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Smogon Test'),
+        title: Text('Flutter Dex'),
       ),
       body: SafeArea(
         child: Column(
@@ -41,17 +42,17 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
               child: Padding(
                   padding: const EdgeInsets.all(4.0),
                   child: TypeAheadField(
-                    hideOnEmpty: true,    
+                    hideOnEmpty: true,
                     hideOnError: true,
-                    hideSuggestionsOnKeyboardHide: true,               
+                    hideSuggestionsOnKeyboardHide: true,
                     textFieldConfiguration: TextFieldConfiguration(
                       onEditingComplete: () async {
                         FocusScope.of(context).requestFocus(FocusNode());
-                        if(_textController.text.isNotEmpty){
-                        BlocProvider.of<SmogonBloc>(context).add(SearchSmogon(
-                            alias: _textController.text.toLowerCase(),
-                            lang: 'en',
-                            gen: 'xy'));
+                        if (_textController.text.isNotEmpty) {
+                          BlocProvider.of<SmogonBloc>(context).add(SearchSmogon(
+                              alias: _textController.text.toLowerCase(),
+                              lang: 'en',
+                              gen: 'xy'));
                         }
                       },
                       controller: _textController,
@@ -74,20 +75,22 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
                       return PokeDB.getMons(pattern);
                     },
                     itemBuilder: (context, suggestion) {
-                      if(_textController.text.isNotEmpty){
+                      if (_textController.text.isNotEmpty) {
                         return ListTile(
-                          leading: Image.asset('lib/assets/img/sprites/${suggestion['ID']}.png'),
+                          leading: Image.asset(
+                              'lib/assets/img/sprites/${suggestion['ID']}.png'),
                           title: Text(suggestion['name']),
                         );
                       }
                       //return null;
                     },
-                    onSuggestionSelected: (Map<String, String> suggestion) async {
+                    onSuggestionSelected:
+                        (Map<String, String> suggestion) async {
                       _textController.text = suggestion['name'];
                       BlocProvider.of<SmogonBloc>(context).add(SearchSmogon(
-                            alias: _textController.text.toLowerCase(),
-                            lang: 'en',
-                            gen: 'xy'));
+                          alias: _textController.text.toLowerCase(),
+                          lang: 'en',
+                          gen: 'xy'));
                     },
                   )),
             ),
@@ -125,17 +128,19 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceAround,
                                   children: <Widget>[
-                                    Expanded(child: Container()),
-                                    Container(
+                                    //Expanded(child: Container()),
+                                    Expanded(
                                       child: Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceAround,
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: <Widget>[
-                                          Container(),
-                                          Image.network(
-                                              'https://www.smogon.com/dex/media/sprites/xy/${_textController.text.toLowerCase()}.gif'),
+                                          //Container(),
+                                          Expanded(
+                                            child: Image.network(
+                                                'https://www.smogon.com/dex/media/sprites/xy/${_textController.text.toLowerCase()}.gif'),
+                                          ),
                                           Text(apiResult.name,
                                               style: TextStyle(
                                                 fontSize: 16,
@@ -144,7 +149,7 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
                                         ],
                                       ),
                                     ),
-                                    Expanded(child: Container()),
+                                    //Expanded(child: Container()),
                                     Container(
                                       child: Column(
                                         mainAxisAlignment:
@@ -228,11 +233,194 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
                                 )
                               ],
                             ),
-                            Text('Strategies', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                            Text('Strategies',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 20)),
                             Container(
                               padding: EdgeInsets.all(6),
                               margin: EdgeInsets.all(6),
-                            )
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                border: Border.all(
+                                  color: Colors.red,
+                                ),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Column(
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 8.0),
+                                    child: Text(
+                                      'Move Set',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          decoration: TextDecoration.underline),
+                                    ),
+                                  ),
+                                  Builder(
+                                    builder: (_) {
+                                      final moves = smogonResult
+                                          .strategies[0].movesets[0].moveslots;
+                                      List<Widget> movesList = [];
+                                      for (var move in moves) {
+                                        movesList.add(Text(move[0]));
+                                      }
+                                      return Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: movesList,
+                                      );
+                                    },
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Divider(),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 8.0),
+                                    child: Text(
+                                      'EV config',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          decoration: TextDecoration.underline),
+                                    ),
+                                  ),
+                                  Container(
+                                    // padding: EdgeInsets.only(top: 10),
+                                    child: Builder(builder: (_) {
+                                      final evs = smogonResult.strategies[0]
+                                          .movesets[0].evconfigs[0];
+                                      List<Widget> evList = [];
+                                      if (evs.atk > 0) {
+                                        evList.add(Text('atk: ${evs.atk}'));
+                                      }
+                                      if (evs.def > 0) {
+                                        evList.add(Text('def: ${evs.def}'));
+                                      }
+                                      if (evs.hp > 0) {
+                                        evList.add(Text('def: ${evs.hp}'));
+                                      }
+                                      if (evs.spa > 0) {
+                                        evList.add(Text('def: ${evs.spa}'));
+                                      }
+                                      if (evs.spd > 0) {
+                                        evList.add(Text('def: ${evs.spd}'));
+                                      }
+                                      if (evs.spe > 0) {
+                                        evList.add(Text('def: ${evs.spe}'));
+                                      }
+                                      return Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: evList,
+                                      );
+                                    }),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Divider(),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 8.0),
+                                    child: Text(
+                                      'Items / Ability / Nature',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          decoration: TextDecoration.underline),
+                                    ),
+                                  ),
+                                  Builder(
+                                    builder: (_) {
+                                      final items = smogonResult
+                                          .strategies[0].movesets[0].items;
+                                      final abilities = smogonResult
+                                          .strategies[0].movesets[0].abilities;
+                                      final natures = smogonResult
+                                          .strategies[0].movesets[0].natures;
+                                      List<Widget> itemList = [];
+                                      String itemString = '';
+                                      String abilityList = '';
+                                      String natureList = '';
+                                      for (var item in items) {
+                                        if (itemString.isEmpty) {
+                                          itemString = item;
+                                        } else {
+                                          itemString += '/$item';
+                                        }
+                                      }
+                                      for (var ability in abilities) {
+                                        if (abilityList.isEmpty) {
+                                          abilityList = ability;
+                                        } else {
+                                          abilityList += '/$ability';
+                                        }
+                                      }
+                                      for (var nature in natures) {
+                                        if (natureList.isEmpty) {
+                                          natureList = nature;
+                                        } else {
+                                          natureList += '/$nature';
+                                        }
+                                      }
+                                      itemList.add(Text(itemString));
+                                      itemList.add(Text(abilityList));
+                                      itemList.add(Text(natureList));
+                                      return Container(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: itemList,
+                                        ),
+                                      );
+                                    },
+                                  )
+                                ],
+                              ),
+                            ),
+                            ExpansionTile(
+                              title: Text('strategy overview'),
+                              subtitle: Text('author: ${smogonResult.strategies[0].credits.writtenBy[0].username}'),
+                              children: <Widget>[
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  child: HtmlView(
+                                      data: smogonResult.strategies[0].comments,
+                                      scrollable: false),
+                                ),
+                              ],
+                            ),
+                            ExpansionTile(
+                              title: Text('${apiResult.name} overview'),
+                              subtitle: Text('author: ${smogonResult.strategies[0].credits.writtenBy[0].username}'),
+                              children: <Widget>[
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  child: HtmlView(
+                                      data: smogonResult.strategies[0].overview,
+                                      scrollable: false),
+                                )
+                              ],
+                            ),
+                            // Padding(
+                            //   padding: const EdgeInsets.all(8.0),
+                            //   child: Text(
+                            //     'Overview',
+                            //     style: TextStyle(
+                            //         decoration: TextDecoration.underline),
+                            //   ),
+                            // ),
+                            // Container(
+                            //     //height: 100,
+                            //     margin: EdgeInsets.all(10),
+                            //     child: HtmlView(
+                            //         data: smogonResult.strategies[0].overview,
+                            //         scrollable: false))
                           ],
                         ),
                       );
@@ -306,39 +494,41 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
     }
   }
 
-  Container buildBar(PokeApi apiResult, int i, String stat) {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            '${stat}: ',
-            textAlign: TextAlign.left,
-          ),
-          Text(apiResult.stats[i].baseStat.toString()),
-          Container(
-            padding: EdgeInsets.all(10),
-            width: 150,
-            child: RoundedProgressBar(
-                style: RoundedProgressBarStyle(
-                  colorProgressDark: Color(Colors.grey[300].value),
-                  colorProgress: apiResult.stats[i].baseStat > 115
-                      ? Color(0xFF26eb5a)
-                      : (apiResult.stats[i].baseStat > 100)
-                          ? Color(0xFFbdeb26)
-                          : (apiResult.stats[i].baseStat > 75)
-                              ? Color(0xFFebc026)
-                              : (apiResult.stats[i].baseStat > 50)
-                                  ? Color(0xFFf06a1d)
-                                  : Color(0xFFf22f1d),
-                  borderWidth: 0,
-                  widthShadow: 0,
-                ),
-                height: 10,
-                percent: (apiResult.stats[i].baseStat / 200) * 100),
-          )
-        ],
+  Expanded buildBar(Pokemon apiResult, int i, String stat) {
+    return Expanded(
+      child: Container(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              '${stat}: ',
+              textAlign: TextAlign.left,
+            ),
+            Text(apiResult.stats[i].baseStat.toString()),
+            Container(
+              padding: EdgeInsets.all(10),
+              width: 130,
+              child: RoundedProgressBar(
+                  style: RoundedProgressBarStyle(
+                    colorProgressDark: Color(Colors.grey[300].value),
+                    colorProgress: apiResult.stats[i].baseStat > 115
+                        ? Color(0xFF26eb5a)
+                        : (apiResult.stats[i].baseStat > 100)
+                            ? Color(0xFFbdeb26)
+                            : (apiResult.stats[i].baseStat > 75)
+                                ? Color(0xFFebc026)
+                                : (apiResult.stats[i].baseStat > 50)
+                                    ? Color(0xFFf06a1d)
+                                    : Color(0xFFf22f1d),
+                    borderWidth: 0,
+                    widthShadow: 0,
+                  ),
+                  height: 10,
+                  percent: (apiResult.stats[i].baseStat / 200) * 100),
+            )
+          ],
+        ),
       ),
     );
   }

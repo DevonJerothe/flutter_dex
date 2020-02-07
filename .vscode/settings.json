@@ -1,0 +1,5 @@
+{
+    "files.autoSave": "afterDelay",
+    "debug.enableAllHovers": true,
+    "debug.inlineValues": true
+}
