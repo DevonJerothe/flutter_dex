@@ -300,16 +300,16 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
                                         evList.add(Text('def: ${evs.def}'));
                                       }
                                       if (evs.hp > 0) {
-                                        evList.add(Text('def: ${evs.hp}'));
+                                        evList.add(Text('hp: ${evs.hp}'));
                                       }
                                       if (evs.spa > 0) {
-                                        evList.add(Text('def: ${evs.spa}'));
+                                        evList.add(Text('spa: ${evs.spa}'));
                                       }
                                       if (evs.spd > 0) {
-                                        evList.add(Text('def: ${evs.spd}'));
+                                        evList.add(Text('spd: ${evs.spd}'));
                                       }
                                       if (evs.spe > 0) {
-                                        evList.add(Text('def: ${evs.spe}'));
+                                        evList.add(Text('spe: ${evs.spe}'));
                                       }
                                       return Row(
                                         mainAxisAlignment:
