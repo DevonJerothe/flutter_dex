@@ -1,16 +1,12 @@
 # flutter_dex
 
-A new Flutter project.
+This is a WIP pokedex and teambuilder app. 
 
-## Getting Started
+As of right now this is just used to play around with the smogon api and PokiAPI data and is expected to change.
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+<img src="https://github.com/DevonJerothe/flutter_dex/blob/dev/screenshots/Simulator%20Screen%20Shot%20-%20iPhone%2011%20Pro%20Max%20-%202020-02-07%20at%2014.54.45.png?raw=true" alt="Smogon"
+	title="Smogon Overview" width="50%" height="50%" />
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<img src="https://github.com/DevonJerothe/flutter_dex/blob/dev/screenshots/Simulator%20Screen%20Shot%20-%20iPhone%2011%20Pro%20Max%20-%202020-02-07%20at%2014.55.26.png?raw=true" alt="Smogon"
+	title="Smogon Overview" width="50%" height="50%" />
