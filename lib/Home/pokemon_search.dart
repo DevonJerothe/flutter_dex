@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dex/data/db/pokemon_list.dart';
-import 'package:flutter_dex/data/poke_api/apiwrapper/poke_api.dart';
-import 'package:flutter_dex/data/poke_api/pokemon.dart';
 import 'package:flutter_rounded_progress_bar/flutter_rounded_progress_bar.dart';
 import 'package:flutter_rounded_progress_bar/rounded_progress_bar_style.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 import '../data/blocs/smogon/bloc.dart';
+import '../data/db/pokemon_list.dart';
+import '../data/poke_api/pokemon.dart';
 import '../data/smogon/smogon.dart';
 
 class MainSearchScreen extends StatefulWidget {
@@ -128,17 +127,19 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceAround,
                                   children: <Widget>[
-                                    Expanded(child: Container()),
-                                    Container(
+                                    //Expanded(child: Container()),
+                                    Expanded(
                                       child: Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceAround,
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: <Widget>[
-                                          Container(),
-                                          Image.network(
-                                              'https://www.smogon.com/dex/media/sprites/xy/${_textController.text.toLowerCase()}.gif'),
+                                          //Container(),
+                                          Expanded(
+                                            child: Image.network(
+                                                'https://www.smogon.com/dex/media/sprites/xy/${_textController.text.toLowerCase()}.gif'),
+                                          ),
                                           Text(apiResult.name,
                                               style: TextStyle(
                                                 fontSize: 16,
@@ -147,7 +148,7 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
                                         ],
                                       ),
                                     ),
-                                    Expanded(child: Container()),
+                                    //Expanded(child: Container()),
                                     Container(
                                       child: Column(
                                         mainAxisAlignment:
@@ -244,13 +245,47 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
                                 ),
                                 borderRadius: BorderRadius.circular(15),
                               ),
-                              child: RaisedButton(
-                                child: Text('test call'),
-                                onPressed: () async {
-                                  print('test');
-                                  await PokeAPI().getPokemon(id: 1);
-                                }
-                              )
+                              child: Column(
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 8.0),
+                                    child: Text(
+                                      'Move Set',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          decoration: TextDecoration.underline
+                                      ),
+                                    ),
+                                  ),
+                                  Builder(
+                                    builder: (_) {
+                                      final moves = smogonResult
+                                          .strategies[0].movesets[0].moveslots;
+                                      List<Widget> movesList = [];
+                                      for (var move in moves) {
+                                        movesList.add(Text(move[0]));
+                                      }
+                                      return Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: movesList,
+                                      );
+                                    },
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      //Stat placement goes here
+                                    ],
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      //Items and ability goes here
+                                    ],
+                                  ),
+                                ],
+                              ),
                             )
                           ],
                         ),
@@ -325,39 +360,41 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
     }
   }
 
-  Container buildBar(Pokemon apiResult, int i, String stat) {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            '${stat}: ',
-            textAlign: TextAlign.left,
-          ),
-          Text(apiResult.stats[i].baseStat.toString()),
-          Container(
-            padding: EdgeInsets.all(10),
-            width: 150,
-            child: RoundedProgressBar(
-                style: RoundedProgressBarStyle(
-                  colorProgressDark: Color(Colors.grey[300].value),
-                  colorProgress: apiResult.stats[i].baseStat > 115
-                      ? Color(0xFF26eb5a)
-                      : (apiResult.stats[i].baseStat > 100)
-                          ? Color(0xFFbdeb26)
-                          : (apiResult.stats[i].baseStat > 75)
-                              ? Color(0xFFebc026)
-                              : (apiResult.stats[i].baseStat > 50)
-                                  ? Color(0xFFf06a1d)
-                                  : Color(0xFFf22f1d),
-                  borderWidth: 0,
-                  widthShadow: 0,
-                ),
-                height: 10,
-                percent: (apiResult.stats[i].baseStat / 200) * 100),
-          )
-        ],
+  Expanded buildBar(Pokemon apiResult, int i, String stat) {
+    return Expanded(
+      child: Container(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              '${stat}: ',
+              textAlign: TextAlign.left,
+            ),
+            Text(apiResult.stats[i].baseStat.toString()),
+            Container(
+              padding: EdgeInsets.all(10),
+              width: 130,
+              child: RoundedProgressBar(
+                  style: RoundedProgressBarStyle(
+                    colorProgressDark: Color(Colors.grey[300].value),
+                    colorProgress: apiResult.stats[i].baseStat > 115
+                        ? Color(0xFF26eb5a)
+                        : (apiResult.stats[i].baseStat > 100)
+                            ? Color(0xFFbdeb26)
+                            : (apiResult.stats[i].baseStat > 75)
+                                ? Color(0xFFebc026)
+                                : (apiResult.stats[i].baseStat > 50)
+                                    ? Color(0xFFf06a1d)
+                                    : Color(0xFFf22f1d),
+                    borderWidth: 0,
+                    widthShadow: 0,
+                  ),
+                  height: 10,
+                  percent: (apiResult.stats[i].baseStat / 200) * 100),
+            )
+          ],
+        ),
       ),
     );
   }
