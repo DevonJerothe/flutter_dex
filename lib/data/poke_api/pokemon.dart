@@ -3,9 +3,6 @@
 //     final Pokemon = PokemonFromJson(jsonString);
 
 import 'dart:convert';
-
-import 'package:flutter_dex/data/poke_api/ability.dart' as ability;
-import 'package:flutter_dex/data/poke_api/move.dart' as move;
 import 'package:flutter_dex/data/poke_api/apiwrapper/poke_api.dart';
 
 Pokemon pokemonFromJson(String str) => Pokemon.fromJson(json.decode(str));
@@ -140,9 +137,6 @@ class Ability {
     this.slot,
   });
 
-  Future<ability.Ability> get abilityInfo async =>
-      await PokeAPI().getAbilityInfo(ability: ability?.name);
-
   factory Ability.fromJson(Map<String, dynamic> json) => Ability(
         ability:
             json["ability"] == null ? null : Species.fromJson(json["ability"]),
@@ -252,9 +246,6 @@ class Move {
     this.move,
     this.versionGroupDetails,
   });
-
-  Future<move.Move> get abilityInfo async =>
-      await PokeAPI().getMoveInfo(move: move?.name);
 
   factory Move.fromJson(Map<String, dynamic> json) => Move(
         move: json["move"] == null ? null : Species.fromJson(json["move"]),
