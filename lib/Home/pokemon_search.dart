@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_html_view/flutter_html_view.dart';
+import 'package:flutter_html/flutter_html.dart';
+// import 'package:flutter_html_view/flutter_html_view.dart';
 import 'package:flutter_rounded_progress_bar/flutter_rounded_progress_bar.dart';
 import 'package:flutter_rounded_progress_bar/rounded_progress_bar_style.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -389,10 +390,8 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
                               children: <Widget>[
                                 Container(
                                   padding: EdgeInsets.all(10),
-                                  child: HtmlView(
-                                      data: smogonResult.strategies[0].comments,
-                                      scrollable: false),
-                                ),
+                                  child: Html(data: smogonResult.strategies[0].comments),
+                                )
                               ],
                             ),
                             ExpansionTile(
@@ -401,26 +400,10 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
                               children: <Widget>[
                                 Container(
                                   padding: EdgeInsets.all(10),
-                                  child: HtmlView(
-                                      data: smogonResult.strategies[0].overview,
-                                      scrollable: false),
+                                  child: Html(data: smogonResult.strategies[0].overview),
                                 )
                               ],
                             ),
-                            // Padding(
-                            //   padding: const EdgeInsets.all(8.0),
-                            //   child: Text(
-                            //     'Overview',
-                            //     style: TextStyle(
-                            //         decoration: TextDecoration.underline),
-                            //   ),
-                            // ),
-                            // Container(
-                            //     //height: 100,
-                            //     margin: EdgeInsets.all(10),
-                            //     child: HtmlView(
-                            //         data: smogonResult.strategies[0].overview,
-                            //         scrollable: false))
                           ],
                         ),
                       );

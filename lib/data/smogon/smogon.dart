@@ -8,7 +8,7 @@
 //
 //      SEND BODY: {"gen":"ss","alias":"charizard","language":"en"}
 //
-// To get pokemon git
+// To get pokemon gif
 //
 //      https://www.smogon.com/dex/media/sprites/xy/ralts.gif
 //
