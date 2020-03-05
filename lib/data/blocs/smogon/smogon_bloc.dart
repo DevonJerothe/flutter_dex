@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dex/data/poke_api/apiwrapper/poke_api.dart';
 import 'package:flutter_dex/data/poke_api/pokemon.dart';
 import 'package:flutter_dex/data/smogon/smogon.dart';
+import 'package:hive/hive.dart';
 import './bloc.dart';
 
 class SmogonBloc extends Bloc<SmogonEvent, SmogonState> {
@@ -24,6 +25,14 @@ class SmogonBloc extends Bloc<SmogonEvent, SmogonState> {
 
   Stream<SmogonState> _mapSearchSmogon(SearchSmogon event) async* {
     yield SmogonSearching();
+    Box<dynamic> box;
+    List<String> pokeHistory;
+
+    if(!Hive.isBoxOpen('pokeBox')){
+      box = await Hive.openBox('pokeBox');
+    }else{
+      box = Hive.box('pokeBox');
+    }
 
     final pokemon = event.alias;
     final gen = event.gen;
@@ -38,6 +47,13 @@ class SmogonBloc extends Bloc<SmogonEvent, SmogonState> {
     //     await Dio().get('https://pokeapi.co/api/v2/pokemon/${pokemon}');
 
     if (smogResponse.data != null && apiResponse != null) {
+      pokeHistory = box.get('history');
+      if(pokeHistory == null){
+        pokeHistory = [event.alias];
+      }else{
+        pokeHistory.add(event.alias);
+      }
+      box.put('history', pokeHistory);
       final smogResult = Smogon.fromJson(smogResponse.data);
       yield SmogonLoaded(smogResult, apiResponse);
     } else {
