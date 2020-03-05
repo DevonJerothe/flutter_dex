@@ -263,7 +263,7 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
                                           .strategies[0].movesets[0].moveslots;
                                       List<Widget> movesList = [];
                                       for (var move in moves) {
-                                        movesList.add(Text(move[0]));
+                                        movesList.add(Text(move[0].move));
                                       }
                                       return Row(
                                         mainAxisAlignment:

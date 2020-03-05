@@ -31,15 +31,15 @@ class Smogon {
     });
 
     factory Smogon.fromJson(Map<String, dynamic> json) => Smogon(
-        languages: List<String>.from(json["languages"].map((x) => x)),
-        learnset: List<String>.from(json["learnset"].map((x) => x)),
-        strategies: List<Strategy>.from(json["strategies"].map((x) => Strategy.fromJson(x))),
+        languages: json["languages"] == null ? null : List<String>.from(json["languages"].map((x) => x)),
+        learnset: json["learnset"] == null ? null : List<String>.from(json["learnset"].map((x) => x)),
+        strategies: json["strategies"] == null ? null : List<Strategy>.from(json["strategies"].map((x) => Strategy.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {
-        "languages": List<dynamic>.from(languages.map((x) => x)),
-        "learnset": List<dynamic>.from(learnset.map((x) => x)),
-        "strategies": List<dynamic>.from(strategies.map((x) => x.toJson())),
+        "languages": languages == null ? null : List<dynamic>.from(languages.map((x) => x)),
+        "learnset": learnset == null ? null : List<dynamic>.from(learnset.map((x) => x)),
+        "strategies": strategies == null ? null : List<dynamic>.from(strategies.map((x) => x.toJson())),
     };
 }
 
@@ -59,19 +59,19 @@ class Strategy {
     });
 
     factory Strategy.fromJson(Map<String, dynamic> json) => Strategy(
-        format: json["format"],
-        overview: json["overview"],
-        comments: json["comments"],
-        movesets: List<Moveset>.from(json["movesets"].map((x) => Moveset.fromJson(x))),
-        credits: Credits.fromJson(json["credits"]),
+        format: json["format"] == null ? null : json["format"],
+        overview: json["overview"] == null ? null : json["overview"],
+        comments: json["comments"] == null ? null : json["comments"],
+        movesets: json["movesets"] == null ? null : List<Moveset>.from(json["movesets"].map((x) => Moveset.fromJson(x))),
+        credits: json["credits"] == null ? null : Credits.fromJson(json["credits"]),
     );
 
     Map<String, dynamic> toJson() => {
-        "format": format,
-        "overview": overview,
-        "comments": comments,
-        "movesets": List<dynamic>.from(movesets.map((x) => x.toJson())),
-        "credits": credits.toJson(),
+        "format": format == null ? null : format,
+        "overview": overview == null ? null : overview,
+        "comments": comments == null ? null : comments,
+        "movesets": movesets == null ? null : List<dynamic>.from(movesets.map((x) => x.toJson())),
+        "credits": credits == null ? null : credits.toJson(),
     };
 }
 
@@ -85,18 +85,18 @@ class Credits {
     });
 
     factory Credits.fromJson(Map<String, dynamic> json) => Credits(
-        teams: List<Team>.from(json["teams"].map((x) => Team.fromJson(x))),
-        writtenBy: List<WrittenBy>.from(json["writtenBy"].map((x) => WrittenBy.fromJson(x))),
+        teams: json["teams"] == null ? null : List<Team>.from(json["teams"].map((x) => Team.fromJson(x))),
+        writtenBy: json["writtenBy"] == null ? null : List<WrittenBy>.from(json["writtenBy"].map((x) => WrittenBy.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {
-        "teams": List<dynamic>.from(teams.map((x) => x.toJson())),
-        "writtenBy": List<dynamic>.from(writtenBy.map((x) => x.toJson())),
+        "teams": teams == null ? null : List<dynamic>.from(teams.map((x) => x.toJson())),
+        "writtenBy": writtenBy == null ? null : List<dynamic>.from(writtenBy.map((x) => x.toJson())),
     };
 }
 
 class Team {
-    String name;
+    Name name;
     List<WrittenBy> members;
 
     Team({
@@ -105,13 +105,13 @@ class Team {
     });
 
     factory Team.fromJson(Map<String, dynamic> json) => Team(
-        name: json["name"],
-        members: List<WrittenBy>.from(json["members"].map((x) => WrittenBy.fromJson(x))),
+        name: json["name"] == null ? null : nameValues.map[json["name"]],
+        members: json["members"] == null ? null : List<WrittenBy>.from(json["members"].map((x) => WrittenBy.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {
-        "name": name,
-        "members": List<dynamic>.from(members.map((x) => x.toJson())),
+        "name": name == null ? null : nameValues.reverse[name],
+        "members": members == null ? null : List<dynamic>.from(members.map((x) => x.toJson())),
     };
 }
 
@@ -125,15 +125,23 @@ class WrittenBy {
     });
 
     factory WrittenBy.fromJson(Map<String, dynamic> json) => WrittenBy(
-        userId: json["user_id"],
-        username: json["username"],
+        userId: json["user_id"] == null ? null : json["user_id"],
+        username: json["username"] == null ? null : json["username"],
     );
 
     Map<String, dynamic> toJson() => {
-        "user_id": userId,
-        "username": username,
+        "user_id": userId == null ? null : userId,
+        "username": username == null ? null : username,
     };
 }
+
+enum Name { QUALITY_CHECKED_BY, GRAMMAR_CHECKED_BY, EARLIER_VERSIONS_BY }
+
+final nameValues = EnumValues({
+    "Earlier versions by": Name.EARLIER_VERSIONS_BY,
+    "Grammar checked by": Name.GRAMMAR_CHECKED_BY,
+    "Quality checked by": Name.QUALITY_CHECKED_BY
+});
 
 class Moveset {
     String name;
@@ -144,9 +152,9 @@ class Moveset {
     String description;
     List<String> abilities;
     List<String> items;
-    List<List<String>> moveslots;
-    List<Evconfig> evconfigs;
-    List<dynamic> ivconfigs;
+    List<List<Moveslot>> moveslots;
+    List<Vconfig> evconfigs;
+    List<Vconfig> ivconfigs;
     List<String> natures;
 
     Moveset({
@@ -165,37 +173,37 @@ class Moveset {
     });
 
     factory Moveset.fromJson(Map<String, dynamic> json) => Moveset(
-        name: json["name"],
-        pokemon: json["pokemon"],
-        shiny: json["shiny"],
-        gender: json["gender"],
-        level: json["level"],
-        description: json["description"],
-        abilities: List<String>.from(json["abilities"].map((x) => x)),
-        items: List<String>.from(json["items"].map((x) => x)),
-        moveslots: List<List<String>>.from(json["moveslots"].map((x) => List<String>.from(x.map((x) => x)))),
-        evconfigs: List<Evconfig>.from(json["evconfigs"].map((x) => Evconfig.fromJson(x))),
-        ivconfigs: List<dynamic>.from(json["ivconfigs"].map((x) => x)),
-        natures: List<String>.from(json["natures"].map((x) => x)),
+        name: json["name"] == null ? null : json["name"],
+        pokemon: json["pokemon"] == null ? null : json["pokemon"],
+        shiny: json["shiny"] == null ? null : json["shiny"],
+        gender: json["gender"] == null ? null : json["gender"],
+        level: json["level"] == null ? null : json["level"],
+        description: json["description"] == null ? null : json["description"],
+        abilities: json["abilities"] == null ? null : List<String>.from(json["abilities"].map((x) => x)),
+        items: json["items"] == null ? null : List<String>.from(json["items"].map((x) => x)),
+        moveslots: json["moveslots"] == null ? null : List<List<Moveslot>>.from(json["moveslots"].map((x) => List<Moveslot>.from(x.map((x) => Moveslot.fromJson(x))))),
+        evconfigs: json["evconfigs"] == null ? null : List<Vconfig>.from(json["evconfigs"].map((x) => Vconfig.fromJson(x))),
+        ivconfigs: json["ivconfigs"] == null ? null : List<Vconfig>.from(json["ivconfigs"].map((x) => Vconfig.fromJson(x))),
+        natures: json["natures"] == null ? null : List<String>.from(json["natures"].map((x) => x)),
     );
 
     Map<String, dynamic> toJson() => {
-        "name": name,
-        "pokemon": pokemon,
-        "shiny": shiny,
-        "gender": gender,
-        "level": level,
-        "description": description,
-        "abilities": List<dynamic>.from(abilities.map((x) => x)),
-        "items": List<dynamic>.from(items.map((x) => x)),
-        "moveslots": List<dynamic>.from(moveslots.map((x) => List<dynamic>.from(x.map((x) => x)))),
-        "evconfigs": List<dynamic>.from(evconfigs.map((x) => x.toJson())),
-        "ivconfigs": List<dynamic>.from(ivconfigs.map((x) => x)),
-        "natures": List<dynamic>.from(natures.map((x) => x)),
+        "name": name == null ? null : name,
+        "pokemon": pokemon == null ? null : pokemon,
+        "shiny": shiny == null ? null : shiny,
+        "gender": gender == null ? null : gender,
+        "level": level == null ? null : level,
+        "description": description == null ? null : description,
+        "abilities": abilities == null ? null : List<dynamic>.from(abilities.map((x) => x)),
+        "items": items == null ? null : List<dynamic>.from(items.map((x) => x)),
+        "moveslots": moveslots == null ? null : List<dynamic>.from(moveslots.map((x) => List<dynamic>.from(x.map((x) => x.toJson())))),
+        "evconfigs": evconfigs == null ? null : List<dynamic>.from(evconfigs.map((x) => x.toJson())),
+        "ivconfigs": ivconfigs == null ? null : List<dynamic>.from(ivconfigs.map((x) => x.toJson())),
+        "natures": natures == null ? null : List<dynamic>.from(natures.map((x) => x)),
     };
 }
 
-class Evconfig {
+class Vconfig {
     int hp;
     int atk;
     int def;
@@ -203,7 +211,7 @@ class Evconfig {
     int spd;
     int spe;
 
-    Evconfig({
+    Vconfig({
         this.hp,
         this.atk,
         this.def,
@@ -212,21 +220,55 @@ class Evconfig {
         this.spe,
     });
 
-    factory Evconfig.fromJson(Map<String, dynamic> json) => Evconfig(
-        hp: json["hp"],
-        atk: json["atk"],
-        def: json["def"],
-        spa: json["spa"],
-        spd: json["spd"],
-        spe: json["spe"],
+    factory Vconfig.fromJson(Map<String, dynamic> json) => Vconfig(
+        hp: json["hp"] == null ? null : json["hp"],
+        atk: json["atk"] == null ? null : json["atk"],
+        def: json["def"] == null ? null : json["def"],
+        spa: json["spa"] == null ? null : json["spa"],
+        spd: json["spd"] == null ? null : json["spd"],
+        spe: json["spe"] == null ? null : json["spe"],
     );
 
     Map<String, dynamic> toJson() => {
-        "hp": hp,
-        "atk": atk,
-        "def": def,
-        "spa": spa,
-        "spd": spd,
-        "spe": spe,
+        "hp": hp == null ? null : hp,
+        "atk": atk == null ? null : atk,
+        "def": def == null ? null : def,
+        "spa": spa == null ? null : spa,
+        "spd": spd == null ? null : spd,
+        "spe": spe == null ? null : spe,
     };
+}
+
+class Moveslot {
+    String move;
+    dynamic type;
+
+    Moveslot({
+        this.move,
+        this.type,
+    });
+
+    factory Moveslot.fromJson(Map<String, dynamic> json) => Moveslot(
+        move: json["move"] == null ? null : json["move"],
+        type: json["type"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "move": move == null ? null : move,
+        "type": type,
+    };
+}
+
+class EnumValues<T> {
+    Map<String, T> map;
+    Map<T, String> reverseMap;
+
+    EnumValues(this.map);
+
+    Map<T, String> get reverse {
+        if (reverseMap == null) {
+            reverseMap = map.map((k, v) => new MapEntry(v, k));
+        }
+        return reverseMap;
+    }
 }
