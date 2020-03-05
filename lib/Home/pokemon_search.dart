@@ -5,6 +5,8 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_rounded_progress_bar/flutter_rounded_progress_bar.dart';
 import 'package:flutter_rounded_progress_bar/rounded_progress_bar_style.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../data/blocs/smogon/bloc.dart';
 import '../data/db/pokemon_list.dart';
@@ -20,6 +22,7 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
   final _textController = TextEditingController();
   Smogon smogonResult;
   Pokemon apiResult;
+  Box<dynamic> box;
 
   @override
   void dispose() {
@@ -386,21 +389,27 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
                             ),
                             ExpansionTile(
                               title: Text('strategy overview'),
-                              subtitle: Text('author: ${smogonResult.strategies[0].credits.writtenBy[0].username}'),
+                              subtitle: Text(
+                                  'author: ${smogonResult.strategies[0].credits.writtenBy[0].username}'),
                               children: <Widget>[
                                 Container(
                                   padding: EdgeInsets.all(10),
-                                  child: Html(data: smogonResult.strategies[0].comments),
+                                  child: Html(
+                                      data:
+                                          smogonResult.strategies[0].comments),
                                 )
                               ],
                             ),
                             ExpansionTile(
                               title: Text('${apiResult.name} overview'),
-                              subtitle: Text('author: ${smogonResult.strategies[0].credits.writtenBy[0].username}'),
+                              subtitle: Text(
+                                  'author: ${smogonResult.strategies[0].credits.writtenBy[0].username}'),
                               children: <Widget>[
                                 Container(
                                   padding: EdgeInsets.all(10),
-                                  child: Html(data: smogonResult.strategies[0].overview),
+                                  child: Html(
+                                      data:
+                                          smogonResult.strategies[0].overview),
                                 )
                               ],
                             ),
@@ -408,7 +417,55 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
                         ),
                       );
                     }
-                    return Container();
+                    return Container(
+                      child: FutureBuilder(
+                        future: openHistory(),
+                        builder: (context, snapshot) {
+                          final List<String> history = box.get('history');
+                          if (history != null && history.isNotEmpty) {
+                            return GridView.builder(
+                              shrinkWrap: true,
+                              itemCount: history.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 3),
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  padding: EdgeInsets.all(6),
+                                  margin: EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[300],
+                                    border: Border.all(
+                                      color: Colors.red,
+                                    ),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Image.network(
+                                            'https://www.smogon.com/dex/media/sprites/xy/${history[index]}.gif'),
+                                      ),
+                                      Text('${history[index]}')
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          } else {
+                            return Container(
+                              child: Center(
+                                child: Text('No History'),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    );
                   },
                 ),
               ),
@@ -475,6 +532,13 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
       case 'water':
         return Color(0xff6890f0);
     }
+  }
+
+  Future openHistory() async {
+    var dir = await getApplicationDocumentsDirectory();
+    Hive.init(dir.path);
+    box = await Hive.openBox('pokeBox');
+    return;
   }
 
   Expanded buildBar(Pokemon apiResult, int i, String stat) {
