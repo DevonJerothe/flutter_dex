@@ -430,28 +430,38 @@ class _MainSearchScreenState extends State<MainSearchScreen> {
                                   SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: 3),
                               itemBuilder: (context, index) {
-                                return Container(
-                                  padding: EdgeInsets.all(6),
-                                  margin: EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[300],
-                                    border: Border.all(
-                                      color: Colors.red,
-                                    ),
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: Image.network(
-                                            'https://www.smogon.com/dex/media/sprites/xy/${history[index]}.gif'),
+                                return GestureDetector(
+                                  onTap: () {
+                                    _textController.text = history[index];
+                                    BlocProvider.of<SmogonBloc>(context).add(
+                                        SearchSmogon(
+                                            alias: history[index],
+                                            lang: 'en',
+                                            gen: 'xy'));
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(6),
+                                    margin: EdgeInsets.all(6),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[300],
+                                      border: Border.all(
+                                        color: Colors.red,
                                       ),
-                                      Text('${history[index]}')
-                                    ],
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: Image.network(
+                                              'https://www.smogon.com/dex/media/sprites/xy/${history[index]}.gif'),
+                                        ),
+                                        Text('${history[index]}')
+                                      ],
+                                    ),
                                   ),
                                 );
                               },

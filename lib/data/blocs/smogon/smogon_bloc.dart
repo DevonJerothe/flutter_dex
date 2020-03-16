@@ -52,6 +52,9 @@ class SmogonBloc extends Bloc<SmogonEvent, SmogonState> {
         pokeHistory = [event.alias];
       }else{
         pokeHistory.add(event.alias);
+        if(pokeHistory.length > 12){
+          pokeHistory.removeAt(0);
+        }
       }
       box.put('history', pokeHistory);
       final smogResult = Smogon.fromJson(smogResponse.data);
